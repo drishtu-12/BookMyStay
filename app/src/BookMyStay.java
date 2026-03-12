@@ -323,3 +323,41 @@ class AddOnServiceManager {
         System.out.println("Total Add-On Cost: " + calculateTotalServiceCost(reservationId));
     }
 }
+import java.util.*;
+
+class BookingHistory {
+
+    // Stores confirmed reservations in order
+    private List<Reservation> confirmedBookings;
+
+    public BookingHistory() {
+        confirmedBookings = new ArrayList<>();
+    }
+
+    // Add confirmed reservation
+    public void addBooking(Reservation reservation) {
+        confirmedBookings.add(reservation);
+    }
+
+    // Retrieve all bookings
+    public List<Reservation> getBookings() {
+        return confirmedBookings;
+    }
+}
+class BookingReportService {
+
+    public void displayBookingReport(BookingHistory history) {
+
+        System.out.println("\nBooking History Report");
+
+        for (Reservation r : history.getBookings()) {
+
+            System.out.println(
+                    "Guest: " + r.getGuestName() +
+                            ", Room Type: " + r.getRoomType()
+            );
+        }
+
+        System.out.println("Total Bookings: " + history.getBookings().size());
+    }
+}
