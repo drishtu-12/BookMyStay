@@ -433,4 +433,44 @@ class CancellationService {
         System.out.println("Reservation cancelled. Room released: " + reservationId);
     }
 }
+class ConcurrentBookingProcessor extends Thread {
+
+    private BookingRequestQueue bookingQueue;
+    private RoomAllocationService allocationService;
+    private RoomInventory inventory;
+
+    public ConcurrentBookingProcessor(
+            BookingRequestQueue bookingQueue,
+            RoomAllocationService allocationService,
+            RoomInventory inventory
+    ) {
+        this.bookingQueue = bookingQueue;
+        this.allocationService = allocationService;
+        this.inventory = inventory;
+    }
+
+    @Override
+    public void run() {
+
+        while (true) {
+
+            Reservation reservation;
+
+            // synchronized access to shared queue
+            synchronized (bookingQueue) {
+
+                if (!bookingQueue.hasPendingRequests()) {
+                    break;
+                }
+
+                reservation = bookingQueue.getNextRequest();
+            }
+
+            // critical section for allocation
+            synchronized (allocationService) {
+                allocationService.allocateRoom(reservation, inventory);
+            }
+        }
+    }
+}
 
