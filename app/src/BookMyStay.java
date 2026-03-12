@@ -433,4 +433,41 @@ class CancellationService {
         System.out.println("Reservation cancelled. Room released: " + reservationId);
     }
 }
+class PersistenceService {
+
+    private static final String FILE_NAME = "inventory.dat";
+
+    // Save inventory to file
+    public void saveInventory(RoomInventory inventory) {
+
+        try (ObjectOutputStream out =
+                     new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+
+            out.writeObject(inventory.getAllAvailability());
+
+            System.out.println("Inventory saved successfully.");
+
+        } catch (IOException e) {
+            System.out.println("Error saving inventory: " + e.getMessage());
+        }
+    }
+
+    // Load inventory from file
+    public Map<String, Integer> loadInventory() {
+
+        try (ObjectInputStream in =
+                     new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+
+            return (Map<String, Integer>) in.readObject();
+
+        } catch (Exception e) {
+
+            System.out.println("No valid inventory data found. Starting fresh.");
+            return null;
+        }
+    }
+}
+public Map<String, Integer> getAllAvailability() {
+    return availability;
+}
 
