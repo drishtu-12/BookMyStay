@@ -259,3 +259,67 @@ Reservation r3 = new Reservation("Vanmathi", "Suite");
 allocationService.allocateRoom(r1, inventory);
 allocationService.allocateRoom(r2, inventory);
 allocationService.allocateRoom(r3, inventory);
+class AddOnService {
+
+    private String serviceName;
+    private double price;
+
+    public AddOnService(String serviceName, double price) {
+        this.serviceName = serviceName;
+        this.price = price;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+}
+import java.util.*;
+
+class AddOnServiceManager {
+
+    // reservationId -> list of services
+    private Map<String, List<AddOnService>> reservationServices;
+
+    public AddOnServiceManager() {
+        reservationServices = new HashMap<>();
+    }
+
+    public void addService(String reservationId, AddOnService service) {
+
+        reservationServices
+                .computeIfAbsent(reservationId, k -> new ArrayList<>())
+                .add(service);
+    }
+
+    public double calculateTotalServiceCost(String reservationId) {
+
+        double total = 0;
+
+        List<AddOnService> services =
+                reservationServices.getOrDefault(reservationId, new ArrayList<>());
+
+        for (AddOnService s : services) {
+            total += s.getPrice();
+        }
+
+        return total;
+    }
+
+    public void displayServices(String reservationId) {
+
+        List<AddOnService> services =
+                reservationServices.getOrDefault(reservationId, new ArrayList<>());
+
+        System.out.println("Services for Reservation " + reservationId + ":");
+
+        for (AddOnService s : services) {
+            System.out.println("- " + s.getServiceName() + " : " + s.getPrice());
+        }
+
+        System.out.println("Total Add-On Cost: " + calculateTotalServiceCost(reservationId));
+    }
+}
