@@ -191,3 +191,71 @@ Reservation request = bookingQueue.getNextRequest();
         " Room"
         );
         }
+class RoomAllocationService {
+
+    // Stores all allocated room IDs
+    private Set<String> allocatedRoomIds;
+
+    // Stores assigned room IDs by room type
+    private Map<String, Set<String>> assignedRoomsByType;
+
+    public RoomAllocationService() {
+        allocatedRoomIds = new HashSet<>();
+        assignedRoomsByType = new HashMap<>();
+    }
+
+    public void allocateRoom(Reservation reservation, RoomInventory inventory) {
+
+        String roomType = reservation.getRoomType();
+
+        int available = inventory.getAvailability(roomType);
+
+        if (available <= 0) {
+            System.out.println("No rooms available for " + roomType);
+            return;
+        }
+
+        // Generate unique room ID
+        String roomId = generateRoomId(roomType);
+
+        // Store allocated ID
+        allocatedRoomIds.add(roomId);
+
+        assignedRoomsByType
+                .computeIfAbsent(roomType, k -> new HashSet<>())
+                .add(roomId);
+
+        // Update inventory
+        inventory.setAvailability(roomType, available - 1);
+
+        // Confirmation message
+        System.out.println(
+                "Booking confirmed for Guest: "
+                        + reservation.getGuestName()
+                        + ", Room ID: "
+                        + roomId
+        );
+    }
+
+    private String generateRoomId(String roomType) {
+
+        int count = assignedRoomsByType
+                .getOrDefault(roomType, new HashSet<>())
+                .size() + 1;
+
+        return roomType + "-" + count;
+    }
+}
+System.out.println("\nRoom Allocation Processing");
+
+RoomAllocationService allocationService = new RoomAllocationService();
+
+// Recreate booking requests
+Reservation r1 = new Reservation("Abhi", "Single");
+Reservation r2 = new Reservation("Subha", "Single");
+Reservation r3 = new Reservation("Vanmathi", "Suite");
+
+// Allocate rooms
+allocationService.allocateRoom(r1, inventory);
+allocationService.allocateRoom(r2, inventory);
+allocationService.allocateRoom(r3, inventory);
