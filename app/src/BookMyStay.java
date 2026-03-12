@@ -94,3 +94,4 @@ class SuiteRoom extends Room {
         super(3, 750, 5000.0);
     }
 }
+//usecases
