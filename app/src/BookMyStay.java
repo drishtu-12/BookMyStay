@@ -38,6 +38,14 @@ public class UseCase2HotelBookingApp {
         System.out.println("Suite Room:");
         suite.displayRoomDetails();
         System.out.println("Available: " + suiteAvailable);
+
+        // Create search service
+        SearchService search = new SearchService(inventory);
+
+// Perform room search
+        search.displayAvailableRooms(single, "Single Room");
+        search.displayAvailableRooms(doubleRoom, "Double Room");
+        search.displayAvailableRooms(suite, "Suite Room");
     }
 }
 
@@ -95,3 +103,24 @@ class SuiteRoom extends Room {
     }
 }
 //usecases
+class SearchService {
+
+    private RoomInventory inventory;
+
+    public SearchService(RoomInventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public void displayAvailableRooms(Room room, String roomType) {
+
+        int available = inventory.getAvailability(roomType);
+
+        // Show only available rooms
+        if (available > 0) {
+            System.out.println(roomType + ":");
+            room.displayRoomDetails();
+            System.out.println("Available Rooms: " + available);
+            System.out.println();
+        }
+    }
+}
